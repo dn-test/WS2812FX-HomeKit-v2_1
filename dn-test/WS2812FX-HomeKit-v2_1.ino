@@ -25,7 +25,6 @@ float current_hue = 0.0;
 int fxmode = 0;
 int fxspeed = 4990;
 
-
 //SSID & Passwd setup
 #include "secrets.h"
 
@@ -60,6 +59,9 @@ String modes = "";
 uint8_t myModes[] = {}; // *** optionally create a custom list of effect/mode numbers
 //uint8_t myModes[] = {FX_MODE_RAINBOW_CYCLE, FX_MODE_RAINBOW};
 bool auto_cycle = false;
+
+static uint32_t next_heap_millis = 0;
+static uint32_t next_update_millis = 0;
 
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -126,8 +128,6 @@ extern "C" homekit_characteristic_t current_spd;
 extern "C" homekit_characteristic_t target_spd;
 extern "C" homekit_characteristic_t position_spd;
 
-static uint32_t next_heap_millis = 0;
-
 void my_homekit_setup() {
 
   cha_on.setter = set_on;
@@ -168,10 +168,6 @@ homekit_value_t fx_speed_get() {
 void my_homekit_loop() {
 	arduino_homekit_loop();
 	
-  homekit_characteristic_notify(&cha_bright, cha_bright.value);
-  homekit_characteristic_notify(&position_mode, current_mode.value);
-  homekit_characteristic_notify(&position_spd, current_spd.value);  
-	
 	const uint32_t t = millis();
 	if (t > next_heap_millis) {
 		// show heap info every 15 seconds
@@ -179,6 +175,15 @@ void my_homekit_loop() {
 		LOG_D("Free heap: %d, HomeKit clients: %d",
 				ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
 
+	}
+	
+	if (t > next_heap_millis) {
+		// show heap info every 5 seconds
+		next_heap_millis = t + 5 * 1000;
+		
+    homekit_characteristic_notify(&cha_bright, cha_bright.value);
+    homekit_characteristic_notify(&current_mode, current_mode.value);
+    homekit_characteristic_notify(&current_spd, current_spd.value); 
 	}
 	
   unsigned long now = millis();
