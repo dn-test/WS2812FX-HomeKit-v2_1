@@ -170,16 +170,16 @@ void my_homekit_loop() {
 	
 	const uint32_t t = millis();
 	if (t > next_heap_millis) {
-		// show heap info every 15 seconds
-		next_heap_millis = t + 15 * 1000;
+		// show heap info every 30 seconds
+		next_heap_millis = t + 30 * 1000;
 		LOG_D("Free heap: %d, HomeKit clients: %d",
 				ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
 
 	}
 	
-	if (t > next_heap_millis) {
+	if (t > next_update_millis) {
 		// show heap info every 5 seconds
-		next_heap_millis = t + 5 * 1000;
+		next_update_millis = t + 5 * 1000;
 		
     homekit_characteristic_notify(&cha_bright, cha_bright.value);
     homekit_characteristic_notify(&current_mode, current_mode.value);
