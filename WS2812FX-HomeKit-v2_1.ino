@@ -181,9 +181,9 @@ void my_homekit_loop() {
 		// show heap info every 5 seconds
 		next_update_millis = t + 5 * 1000;
 		
-    homekit_characteristic_notify(&cha_bright, cha_bright.value);
-    homekit_characteristic_notify(&current_mode, current_mode.value);
-    homekit_characteristic_notify(&current_spd, current_spd.value); 
+		homekit_characteristic_notify(&cha_bright, cha_bright.value);
+		homekit_characteristic_notify(&current_mode, current_mode.value);
+		homekit_characteristic_notify(&current_spd, current_spd.value); 
 	}
 	
   unsigned long now = millis();
